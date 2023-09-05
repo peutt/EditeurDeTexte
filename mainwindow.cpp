@@ -22,9 +22,9 @@ MainWindow::MainWindow(QWidget *parent)
     connect (ui->pushButtonRecherche,SIGNAL(clicked()),this,SLOT(rechercherTexte()));
     connect (ui->pushButtonRemplaceTout,SIGNAL(clicked()),this,SLOT(remplacerTout()));
     connect (ui->action10_derniers_fichiers,SIGNAL(triggered()),this,SLOT(afficherDerniersFichiersOuverts()));
-    // Initialisez l'objet QSettings
-    settings.beginGroup("MonEditeurDeTexte"); // Utilisez un groupe pour éviter les collisions de clés
-    settings.setValue("fichiersRecents", QStringList()); // Initialisez la liste des fichiers récemment ouverts
+    // Initialise l'objet QSettings
+    settings.beginGroup("MonEditeurDeTexte"); // Utilise un groupe pour éviter les collisions de clés
+    settings.setValue("fichiersRecents", QStringList()); // Initialise la liste des fichiers récemment ouverts
 }
 
 void MainWindow::sauvegarderUn(){
@@ -250,10 +250,10 @@ void MainWindow::remplacerTout()
 
 void MainWindow::afficherDerniersFichiersOuverts()
 {
-    // Lisez la liste des fichiers récemment ouverts à partir des paramètres de l'application
+    // Lit la liste des fichiers récemment ouverts à partir des paramètres de l'application
     QStringList fichiersRecents = settings.value("fichiersRecents").toStringList();
 
-    // Créez un message contenant la liste des fichiers récemment ouverts
+    // Crée un message contenant la liste des fichiers récemment ouverts
     QString message = "Derniers fichiers ouverts :\n";
     int numFilesToShow = qMin(10, fichiersRecents.size()); // Afficher au maximum 10 fichiers
     for (int i = 0; i < numFilesToShow; ++i)
