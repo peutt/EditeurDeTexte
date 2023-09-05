@@ -20,6 +20,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect (ui->actionOuvrir,SIGNAL(triggered()),this,SLOT(ouvrir()));
     connect (ui->tabWidget,SIGNAL(tabCloseRequested(int)),this,SLOT(fermerOnglet(int)));
     connect (ui->pushButtonRecherche,SIGNAL(clicked()),this,SLOT(rechercherTexte()));
+    connect (ui->pushButtonRemplaceTout,SIGNAL(clicked()),this,SLOT(remplacerTout()));
 }
 
 void MainWindow::sauvegarderUn(){
@@ -181,6 +182,47 @@ void MainWindow::rechercherTexte()
                 QTextCharFormat format;
                 format.setBackground(QColor(Qt::yellow));
                 rechercheCursor.mergeCharFormat(format);
+            }
+        }
+    }
+}
+
+void MainWindow::remplacerTout()
+{
+    // Obtiens le texte à rechercher et le texte de remplacement à partir des champs de saisie
+    QString texteRecherche = ui->lineEdit->text();
+    QString texteRemplacement = ui->lineEdit_2->text();
+
+    if (texteRecherche.isEmpty() || texteRemplacement.isEmpty())
+        return;
+
+    QTextEdit *textEdit = qobject_cast<QTextEdit*>(ui->tabWidget->currentWidget());
+    if (textEdit)
+    {
+        QTextCursor cursor = textEdit->textCursor();
+        QTextDocument *document = textEdit->document();
+
+        QTextCursor rechercheCursor(document);
+
+        // Configure les options de recherche en fonction des besoins
+        QTextDocument::FindFlags options;
+
+        if (ui->checkBox->isChecked()) // Si l'option de sensibilité à la casse est cochée
+        {
+            options |= QTextDocument::FindCaseSensitively;
+        }
+
+        options |= QTextDocument::FindWholeWords; // Option pour correspondre uniquement aux mots entiers
+
+        // Parcours le texte pour trouver toutes les occurrences
+        while (!rechercheCursor.isNull() && !rechercheCursor.atEnd())
+        {
+            rechercheCursor = document->find(texteRecherche, rechercheCursor, options);
+
+            if (!rechercheCursor.isNull())
+            {
+                // Remplace le texte trouvé par le texte de remplacement
+                rechercheCursor.insertText(texteRemplacement);
             }
         }
     }

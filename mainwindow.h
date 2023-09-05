@@ -23,6 +23,7 @@ private slots:
     void sauvegarderUn();
     void afficherPositionCurseur();
     void rechercherTexte();
+    void remplacerTout();
 private:
     Ui::MainWindow *ui;
     void sauvegarder(int index);
