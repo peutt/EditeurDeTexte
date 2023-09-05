@@ -48,7 +48,7 @@
       <item row="0" column="1">
        <widget class="QCheckBox" name="checkBox">
         <property name="text">
-         <string>Recherche Pointue</string>
+         <string>Majuscule</string>
         </property>
        </widget>
       </item>

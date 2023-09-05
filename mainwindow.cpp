@@ -15,13 +15,15 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
     ui->tabWidget->clear();
+
     connect (ui->actionSauvegarder_tout,SIGNAL(triggered()),this,SLOT(sauvegarderTout()));
     connect (ui->actionSauvegarder,SIGNAL(triggered()),this,SLOT(sauvegarderUn()));
-    connect (ui->actionOuvrir,SIGNAL(triggered()),this,SLOT(ouvrir()));
+    connect (ui->actionOuvrir,SIGNAL(triggered()),this,SLOT(slotOuvrir()));
     connect (ui->tabWidget,SIGNAL(tabCloseRequested(int)),this,SLOT(fermerOnglet(int)));
     connect (ui->pushButtonRecherche,SIGNAL(clicked()),this,SLOT(rechercherTexte()));
     connect (ui->pushButtonRemplaceTout,SIGNAL(clicked()),this,SLOT(remplacerTout()));
     connect (ui->action10_derniers_fichiers,SIGNAL(triggered()),this,SLOT(afficherDerniersFichiersOuverts()));
+
     // Initialise l'objet QSettings
     settings.beginGroup("MonEditeurDeTexte"); // Utilise un groupe pour éviter les collisions de clés
     settings.setValue("fichiersRecents", QStringList()); // Initialise la liste des fichiers récemment ouverts
@@ -60,23 +62,23 @@ void MainWindow::textChange(){
         ui->tabWidget->setTabText(index, tabText + "*");
     }
 }
-
-void MainWindow::ouvrir(){
-    QString file_name = QFileDialog::getOpenFileName(this, "Ouvrir un fichier");
-    if (file_name.isEmpty())
-        return;
-
-    // Ajoutez le chemin complet du fichier ouvert à la liste des fichiers récemment ouverts
+void MainWindow::ouvrir(QString file_name){
+    // Ajoute le chemin complet du fichier ouvert à la liste des fichiers récemment ouverts
     QStringList fichiersRecents = settings.value("fichiersRecents").toStringList();
-    fichiersRecents.prepend(file_name);
 
-    // Limitez la liste à un maximum de dix éléments
+    if(!fichiersRecents.contains(file_name))//Verifie l'unicité du fichier ouvert dans la liste des fichiers reçament ouvert
+    {
+        fichiersRecents.prepend(file_name);
+    }
+
+
+    // Limite la liste à un maximum de dix éléments
     while (fichiersRecents.size() > 10)
     {
         fichiersRecents.removeLast();
     }
 
-    // Enregistrez la liste mise à jour dans les paramètres de l'application
+    // Enregistre la liste mise à jour dans les paramètres de l'application
     settings.setValue("fichiersRecents", fichiersRecents);
 
 
@@ -84,8 +86,8 @@ void MainWindow::ouvrir(){
     // Vérifie si un onglet correspondant au fichier est déjà ouvert
     for (int index = 0; index < ui->tabWidget->count(); ++index)
     {
-        QString tabText = ui->tabWidget->tabText(index);
-        if (tabText == file_name || tabText==file_name+"*")
+        QString tabToolTip = ui->tabWidget->tabToolTip(index);
+        if (tabToolTip == file_name)
         {
             // L'onglet est déjà ouvert, on ne fais rien
             return;
@@ -97,7 +99,12 @@ void MainWindow::ouvrir(){
     }
 
     auto textEdit=new QTextEdit();
-    ui->tabWidget->addTab(textEdit, QString(file_name).arg(ui->tabWidget->count()+1));
+
+    QFileInfo fileInfo(file_name);
+
+    QString nomFichier = fileInfo.fileName(); // Obtient le nom du fichier
+    int index = ui->tabWidget->addTab(textEdit, QString(nomFichier).arg(ui->tabWidget->count()+1));
+    ui->tabWidget->setTabToolTip(index, file_name);
     QTextStream in (&file);
     QString text = in.readAll();
     textEdit->setText(text);
@@ -106,7 +113,12 @@ void MainWindow::ouvrir(){
     connect(textEdit, SIGNAL(cursorPositionChanged()), this, SLOT(afficherPositionCurseur()));
 
     file.close();
-
+}
+void MainWindow::slotOuvrir(){
+    QString file_name = QFileDialog::getOpenFileName(this, "Ouvrir un fichier");
+    if (file_name.isEmpty())
+        return;
+    ouvrir(file_name);
 }
 
 void MainWindow::fermerOnglet(int index){
@@ -132,7 +144,7 @@ void MainWindow::sauvegarder(int index){
         ui->tabWidget->setTabText(index, tabText);
     }
 
-    QFile file(ui->tabWidget->tabText(index));
+    QFile file(ui->tabWidget->tabToolTip(index));
     if(!file.open(QFile::WriteOnly)){
         QMessageBox::warning(this,ui->tabWidget->tabText(index),"fichier non sauvgarder");
     }
@@ -262,7 +274,15 @@ void MainWindow::afficherDerniersFichiersOuverts()
     }
 
     // Affichez le message dans un QMessageBox
-    QMessageBox::information(this, "Derniers fichiers ouverts", message);
+
+    QMessageBox::StandardButton reply;
+    reply = QMessageBox::information(this, "Derniers fichiers ouverts", message, QMessageBox::Open | QMessageBox::Close);
+    if (reply == QMessageBox::Open)
+    {
+        for(auto fichier:fichiersRecents){
+            ouvrir(fichier);
+        }
+    }
 }
 MainWindow::~MainWindow()
 {

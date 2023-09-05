@@ -17,7 +17,7 @@ public:
     ~MainWindow();
 
 private slots:
-    void ouvrir();
+    void slotOuvrir();
     void fermerOnglet(int index);
     void textChange();
     void sauvegarderTout();
@@ -31,5 +31,6 @@ private:
     Ui::MainWindow *ui;
     void sauvegarder(int index);
 
+    void ouvrir(QString);
 };
 #endif // MAINWINDOW_H
