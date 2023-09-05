@@ -146,11 +146,11 @@ void MainWindow::rechercherTexte()
         QTextCursor cursor = textEdit->textCursor();
         cursor.select(QTextCursor::Document);
         QTextCharFormat format;
-        format.setBackground(Qt::white); // Changez la couleur d'arrière-plan au blanc ou à la couleur par défaut
+        format.setBackground(Qt::white); // Change la couleur d'arrière-plan au blanc
         cursor.mergeCharFormat(format);
     }
 
-    // Obtenez le texte à rechercher à partir d'une boîte de dialogue ou d'un champ de recherche
+    // Obtient le texte à rechercher à partir d'un champ de recherche
     QString texteRecherche = ui->lineEdit->text();
 
     if (texteRecherche.isEmpty())
@@ -164,22 +164,20 @@ void MainWindow::rechercherTexte()
 
         QTextCursor rechercheCursor(document);
 
-        // Configurez les options de recherche en fonction des besoins
-        QTextDocument::FindFlags options = 0;
-
-        if (ui->checkBox->isChecked()) // Si l'option de sensibilité à la casse est cochée
-        {
-            options |= QTextDocument::FindCaseSensitively;
-        }
-
-        // Parcourez le texte pour trouver toutes les occurrences
+        // Parcours le texte pour trouver toutes les occurrences
         while (!rechercheCursor.isNull() && !rechercheCursor.atEnd())
         {
-            rechercheCursor = document->find(texteRecherche, rechercheCursor, options);
+            if (ui->checkBox->isChecked()) // Si l'option de sensibilité à la casse est cochée
+            {
+                rechercheCursor = document->find(texteRecherche, rechercheCursor,QTextDocument::FindCaseSensitively);
+            } else {
+                rechercheCursor = document->find(texteRecherche, rechercheCursor);
+            }
+
 
             if (!rechercheCursor.isNull())
             {
-                // Traitez la correspondance trouvée ici, par exemple, mettez en surbrillance le texte
+                // Traite la correspondance trouvée ici, met en surbrillance le texte
                 QTextCharFormat format;
                 format.setBackground(QColor(Qt::yellow));
                 rechercheCursor.mergeCharFormat(format);
