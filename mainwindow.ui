@@ -90,7 +90,14 @@
     <addaction name="actionSauvegarder"/>
     <addaction name="actionSauvegarder_tout"/>
    </widget>
+   <widget class="QMenu" name="menuAfficher">
+    <property name="title">
+     <string>Afficher</string>
+    </property>
+    <addaction name="action10_derniers_fichiers"/>
+   </widget>
    <addaction name="menuFichier"/>
+   <addaction name="menuAfficher"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="actionOuvrir">
@@ -106,6 +113,11 @@
   <action name="actionSauvegarder_tout">
    <property name="text">
     <string>Sauvegarder tout</string>
+   </property>
+  </action>
+  <action name="action10_derniers_fichiers">
+   <property name="text">
+    <string>10 derniers fichiers</string>
    </property>
   </action>
  </widget>

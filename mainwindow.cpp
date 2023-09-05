@@ -21,6 +21,10 @@ MainWindow::MainWindow(QWidget *parent)
     connect (ui->tabWidget,SIGNAL(tabCloseRequested(int)),this,SLOT(fermerOnglet(int)));
     connect (ui->pushButtonRecherche,SIGNAL(clicked()),this,SLOT(rechercherTexte()));
     connect (ui->pushButtonRemplaceTout,SIGNAL(clicked()),this,SLOT(remplacerTout()));
+    connect (ui->action10_derniers_fichiers,SIGNAL(triggered()),this,SLOT(afficherDerniersFichiersOuverts()));
+    // Initialisez l'objet QSettings
+    settings.beginGroup("MonEditeurDeTexte"); // Utilisez un groupe pour éviter les collisions de clés
+    settings.setValue("fichiersRecents", QStringList()); // Initialisez la liste des fichiers récemment ouverts
 }
 
 void MainWindow::sauvegarderUn(){
@@ -59,6 +63,23 @@ void MainWindow::textChange(){
 
 void MainWindow::ouvrir(){
     QString file_name = QFileDialog::getOpenFileName(this, "Ouvrir un fichier");
+    if (file_name.isEmpty())
+        return;
+
+    // Ajoutez le chemin complet du fichier ouvert à la liste des fichiers récemment ouverts
+    QStringList fichiersRecents = settings.value("fichiersRecents").toStringList();
+    fichiersRecents.prepend(file_name);
+
+    // Limitez la liste à un maximum de dix éléments
+    while (fichiersRecents.size() > 10)
+    {
+        fichiersRecents.removeLast();
+    }
+
+    // Enregistrez la liste mise à jour dans les paramètres de l'application
+    settings.setValue("fichiersRecents", fichiersRecents);
+
+
 
     // Vérifie si un onglet correspondant au fichier est déjà ouvert
     for (int index = 0; index < ui->tabWidget->count(); ++index)
@@ -73,7 +94,8 @@ void MainWindow::ouvrir(){
     QFile file(file_name);
     if(!file.open(QFile::ReadOnly)){
         QMessageBox::warning(this,"title","fichier non ouvert");
-    }    
+    }
+
     auto textEdit=new QTextEdit();
     ui->tabWidget->addTab(textEdit, QString(file_name).arg(ui->tabWidget->count()+1));
     QTextStream in (&file);
@@ -192,11 +214,11 @@ void MainWindow::remplacerTout()
     // Obtiens le texte à rechercher et le texte de remplacement à partir des champs de saisie
     QString texteRecherche = ui->lineEdit->text();
     QString texteRemplacement = ui->lineEdit_2->text();
-
     if (texteRecherche.isEmpty() || texteRemplacement.isEmpty())
         return;
 
     QTextEdit *textEdit = qobject_cast<QTextEdit*>(ui->tabWidget->currentWidget());
+
     if (textEdit)
     {
         QTextCursor cursor = textEdit->textCursor();
@@ -204,20 +226,17 @@ void MainWindow::remplacerTout()
 
         QTextCursor rechercheCursor(document);
 
-        // Configure les options de recherche en fonction des besoins
-        QTextDocument::FindFlags options;
 
-        if (ui->checkBox->isChecked()) // Si l'option de sensibilité à la casse est cochée
-        {
-            options |= QTextDocument::FindCaseSensitively;
-        }
-
-        options |= QTextDocument::FindWholeWords; // Option pour correspondre uniquement aux mots entiers
 
         // Parcours le texte pour trouver toutes les occurrences
         while (!rechercheCursor.isNull() && !rechercheCursor.atEnd())
         {
-            rechercheCursor = document->find(texteRecherche, rechercheCursor, options);
+            if (ui->checkBox->isChecked()) // Si l'option de sensibilité à la casse est cochée
+            {
+                rechercheCursor = document->find(texteRecherche, rechercheCursor, QTextDocument::FindCaseSensitively);
+            }
+
+            rechercheCursor = document->find(texteRecherche, rechercheCursor);
 
             if (!rechercheCursor.isNull())
             {
@@ -225,10 +244,26 @@ void MainWindow::remplacerTout()
                 rechercheCursor.insertText(texteRemplacement);
             }
         }
+
     }
 }
 
+void MainWindow::afficherDerniersFichiersOuverts()
+{
+    // Lisez la liste des fichiers récemment ouverts à partir des paramètres de l'application
+    QStringList fichiersRecents = settings.value("fichiersRecents").toStringList();
 
+    // Créez un message contenant la liste des fichiers récemment ouverts
+    QString message = "Derniers fichiers ouverts :\n";
+    int numFilesToShow = qMin(10, fichiersRecents.size()); // Afficher au maximum 10 fichiers
+    for (int i = 0; i < numFilesToShow; ++i)
+    {
+        message += QString("%1. %2\n").arg(i + 1).arg(fichiersRecents[i]);
+    }
+
+    // Affichez le message dans un QMessageBox
+    QMessageBox::information(this, "Derniers fichiers ouverts", message);
+}
 MainWindow::~MainWindow()
 {
     delete ui;

@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 
+#include<QSettings>
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
@@ -24,7 +25,9 @@ private slots:
     void afficherPositionCurseur();
     void rechercherTexte();
     void remplacerTout();
+    void afficherDerniersFichiersOuverts();
 private:
+    QSettings settings;
     Ui::MainWindow *ui;
     void sauvegarder(int index);
 
