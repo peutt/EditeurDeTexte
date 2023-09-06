@@ -33,6 +33,7 @@ void MainWindow::ouvrirDernierFichier(QAction* action){
     ouvrir(action->text());
     ui->menu10_derniers_fichiers->clear();
 }
+
 void MainWindow::sauvegarderUn(){
     sauvegarder(ui->tabWidget->currentIndex());
 }
@@ -160,6 +161,8 @@ void MainWindow::fermerOnglet(int index){
 }
 
 void MainWindow::sauvegarder(int index){
+
+
     // Renomme l'onglet en supprimant le caractère '*'
     QString tabText = ui->tabWidget->tabText(index);
     if (tabText.endsWith("*"))
@@ -173,9 +176,13 @@ void MainWindow::sauvegarder(int index){
         QMessageBox::warning(this,ui->tabWidget->tabText(index),"fichier non sauvgarder");
     }
     QTextStream stream(&file);
-    QTextEdit *textEdit = qobject_cast<QTextEdit*>(ui->tabWidget->widget(index));
 
-    stream<<textEdit->toPlainText();
+    QTextEdit *textEdit = qobject_cast<QTextEdit*>(ui->tabWidget->widget(index));
+    if (textEdit)
+    {
+        contenuInitialMap[textEdit] = textEdit->toPlainText();
+        stream<<textEdit->toPlainText();
+    }
     file.close();
 }
 
