@@ -26,14 +26,14 @@ private slots:
     void afficherPositionCurseur();
     void rechercherTexte();
     void remplacerTout();
-    void afficherDerniersFichiersOuverts();
+
     void ouvrirDernierFichier(QAction *action);
 private:
     QSettings settings;
     Ui::MainWindow *ui;
     QMap<QTextEdit*, QString> contenuInitialMap;
     void sauvegarder(int index);
-
+    void afficherDerniersFichiersOuverts();
     void ouvrir(QString);
 };
 #endif // MAINWINDOW_H

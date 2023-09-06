@@ -23,10 +23,12 @@ MainWindow::MainWindow(QWidget *parent)
     connect (ui->pushButtonRecherche,SIGNAL(clicked()),this,SLOT(rechercherTexte()));
     connect (ui->pushButtonRemplaceTout,SIGNAL(clicked()),this,SLOT(remplacerTout()));
     connect (ui->menuFichiers_recents,SIGNAL(triggered(QAction*)),this,SLOT(ouvrirDernierFichier(QAction*)));
-    connect (ui->menuFichiers_recents,SIGNAL(aboutToShow()),this,SLOT(afficherDerniersFichiersOuverts()));
+
 
     // Initialise QSettings
     settings.beginGroup("EditeurDeTexte"); // Utilise un groupe pour éviter les collisions de clés
+
+    afficherDerniersFichiersOuverts();
 }
 void MainWindow::ouvrirDernierFichier(QAction* action){
     ouvrir(action->text());
@@ -103,7 +105,8 @@ void MainWindow::ouvrir(QString file_name){
 
     // Enregistre la liste mise à jour dans les paramètres de l'application
     settings.setValue("fichiersRecents", fichiersRecents);
-
+    ui->menuFichiers_recents->clear();
+    afficherDerniersFichiersOuverts();
 
 
     // Vérifie si un onglet correspondant au fichier est déjà ouvert
@@ -135,7 +138,6 @@ void MainWindow::ouvrir(QString file_name){
     connect(textEdit, SIGNAL(textChanged()), this, SLOT(textChange()));
     connect(textEdit, SIGNAL(cursorPositionChanged()), this, SLOT(afficherPositionCurseur()));
 
-    ui->menuFichiers_recents->clear();
     file.close();
 }
 void MainWindow::slotOuvrir(){
@@ -292,6 +294,7 @@ void MainWindow::remplacerTout()
 
 void MainWindow::afficherDerniersFichiersOuverts()
 {
+    qDebug()<<"onestlà";
     // Lit la liste des fichiers récemment ouverts à partir des paramètres de l'application
     QStringList fichiersRecents = settings.value("fichiersRecents").toStringList();
     for(auto fichier:fichiersRecents){
