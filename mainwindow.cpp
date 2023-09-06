@@ -278,9 +278,9 @@ void MainWindow::remplacerTout()
             if (ui->checkBox->isChecked()) // Si l'option de sensibilité à la casse est cochée
             {
                 rechercheCursor = document->find(texteRecherche, rechercheCursor, QTextDocument::FindCaseSensitively);
+            }else{
+                rechercheCursor = document->find(texteRecherche, rechercheCursor);
             }
-
-            rechercheCursor = document->find(texteRecherche, rechercheCursor);
 
             if (!rechercheCursor.isNull())
             {
@@ -294,7 +294,6 @@ void MainWindow::remplacerTout()
 
 void MainWindow::afficherDerniersFichiersOuverts()
 {
-    qDebug()<<"onestlà";
     // Lit la liste des fichiers récemment ouverts à partir des paramètres de l'application
     QStringList fichiersRecents = settings.value("fichiersRecents").toStringList();
     for(auto fichier:fichiersRecents){
