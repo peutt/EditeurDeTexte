@@ -46,10 +46,6 @@ void MainWindow::displayRecentFiles()
     {
         QAction *action = new QAction(fichier, this);
         ui->menuFichiers_recents->addAction(action);
-
-        connect(action, &QAction::triggered, [this, fichier]() {
-            ouvrir(fichier);
-        });
     }
 }
 
