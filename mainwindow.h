@@ -27,6 +27,7 @@ private slots:
     void rechercherTexte();
     void remplacerTout();
     void afficherDerniersFichiersOuverts();
+    void ouvrirDernierFichier(QAction *action);
 private:
     QSettings settings;
     Ui::MainWindow *ui;

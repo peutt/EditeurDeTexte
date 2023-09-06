@@ -22,13 +22,17 @@ MainWindow::MainWindow(QWidget *parent)
     connect (ui->tabWidget,SIGNAL(tabCloseRequested(int)),this,SLOT(fermerOnglet(int)));
     connect (ui->pushButtonRecherche,SIGNAL(clicked()),this,SLOT(rechercherTexte()));
     connect (ui->pushButtonRemplaceTout,SIGNAL(clicked()),this,SLOT(remplacerTout()));
-    connect (ui->action10_derniers_fichiers,SIGNAL(triggered()),this,SLOT(afficherDerniersFichiersOuverts()));
+    connect (ui->menu10_derniers_fichiers,SIGNAL(triggered(QAction*)),this,SLOT(ouvrirDernierFichier(QAction*)));
+    connect (ui->menu10_derniers_fichiers,SIGNAL(aboutToShow()),this,SLOT(afficherDerniersFichiersOuverts()));
 
     // Initialise l'objet QSettings
     settings.beginGroup("MonEditeurDeTexte"); // Utilise un groupe pour éviter les collisions de clés
     settings.setValue("fichiersRecents", QStringList()); // Initialise la liste des fichiers récemment ouverts
 }
-
+void MainWindow::ouvrirDernierFichier(QAction* action){
+    ouvrir(action->text());
+    ui->menu10_derniers_fichiers->clear();
+}
 void MainWindow::sauvegarderUn(){
     sauvegarder(ui->tabWidget->currentIndex());
 }
@@ -284,24 +288,8 @@ void MainWindow::afficherDerniersFichiersOuverts()
 {
     // Lit la liste des fichiers récemment ouverts à partir des paramètres de l'application
     QStringList fichiersRecents = settings.value("fichiersRecents").toStringList();
-
-    // Crée un message contenant la liste des fichiers récemment ouverts
-    QString message = "Derniers fichiers ouverts :\n";
-    int numFilesToShow = qMin(10, fichiersRecents.size()); // Afficher au maximum 10 fichiers
-    for (int i = 0; i < numFilesToShow; ++i)
-    {
-        message += QString("%1. %2\n").arg(i + 1).arg(fichiersRecents[i]);
-    }
-
-    // Affiche le message dans un QMessageBox
-
-    QMessageBox::StandardButton reply;
-    reply = QMessageBox::information(this, "Derniers fichiers ouverts", message, QMessageBox::Open | QMessageBox::Close);
-    if (reply == QMessageBox::Open)
-    {
-        for(auto fichier:fichiersRecents){
-            ouvrir(fichier);
-        }
+    for(auto fichier:fichiersRecents){
+        ui->menu10_derniers_fichiers->addAction(fichier);
     }
 }
 MainWindow::~MainWindow()

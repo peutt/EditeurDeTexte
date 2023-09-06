@@ -94,7 +94,12 @@
     <property name="title">
      <string>Afficher</string>
     </property>
-    <addaction name="action10_derniers_fichiers"/>
+    <widget class="QMenu" name="menu10_derniers_fichiers">
+     <property name="title">
+      <string>10 derniers fichiers</string>
+     </property>
+    </widget>
+    <addaction name="menu10_derniers_fichiers"/>
    </widget>
    <addaction name="menuFichier"/>
    <addaction name="menuAfficher"/>
@@ -115,9 +120,9 @@
     <string>Sauvegarder tout</string>
    </property>
   </action>
-  <action name="action10_derniers_fichiers">
+  <action name="actionici">
    <property name="text">
-    <string>10 derniers fichiers</string>
+    <string>ici</string>
    </property>
   </action>
  </widget>
