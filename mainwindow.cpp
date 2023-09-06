@@ -148,7 +148,7 @@ void MainWindow::fermerOnglet(int index){
         reply = QMessageBox::question(this, "Confirmation de sauvegarde", "Le fichier '" + ui->tabWidget->tabText(index) + "' a été modifié. Voulez-vous enregistrer les modifications avant de fermer ?", QMessageBox::Save | QMessageBox::Discard);
         if (reply == QMessageBox::Save)
         {
-            // L'utilisateur souhaite sauvegarder, appelez la méthode sauvegarder.
+            // L'utilisateur souhaite sauvegarder, appel la méthode sauvegarder.
             sauvegarder(index);
         }
     }
@@ -293,7 +293,7 @@ void MainWindow::afficherDerniersFichiersOuverts()
         message += QString("%1. %2\n").arg(i + 1).arg(fichiersRecents[i]);
     }
 
-    // Affichez le message dans un QMessageBox
+    // Affiche le message dans un QMessageBox
 
     QMessageBox::StandardButton reply;
     reply = QMessageBox::information(this, "Derniers fichiers ouverts", message, QMessageBox::Open | QMessageBox::Close);
