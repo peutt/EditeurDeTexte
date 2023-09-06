@@ -86,23 +86,17 @@
     <property name="title">
      <string>Fichier</string>
     </property>
+    <widget class="QMenu" name="menuFichiers_recents">
+     <property name="title">
+      <string>Fichiers recents</string>
+     </property>
+    </widget>
     <addaction name="actionOuvrir"/>
     <addaction name="actionSauvegarder"/>
     <addaction name="actionSauvegarder_tout"/>
-   </widget>
-   <widget class="QMenu" name="menuAfficher">
-    <property name="title">
-     <string>Afficher</string>
-    </property>
-    <widget class="QMenu" name="menu10_derniers_fichiers">
-     <property name="title">
-      <string>10 derniers fichiers</string>
-     </property>
-    </widget>
-    <addaction name="menu10_derniers_fichiers"/>
+    <addaction name="menuFichiers_recents"/>
    </widget>
    <addaction name="menuFichier"/>
-   <addaction name="menuAfficher"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="actionOuvrir">
@@ -123,6 +117,11 @@
   <action name="actionici">
    <property name="text">
     <string>ici</string>
+   </property>
+  </action>
+  <action name="actiongfd">
+   <property name="text">
+    <string>gfd</string>
    </property>
   </action>
  </widget>

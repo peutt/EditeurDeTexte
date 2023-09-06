@@ -15,23 +15,21 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
     ui->tabWidget->clear();
-
+    ui->menuFichiers_recents->clear();
     connect (ui->actionSauvegarder_tout,SIGNAL(triggered()),this,SLOT(sauvegarderTout()));
     connect (ui->actionSauvegarder,SIGNAL(triggered()),this,SLOT(sauvegarderUn()));
     connect (ui->actionOuvrir,SIGNAL(triggered()),this,SLOT(slotOuvrir()));
     connect (ui->tabWidget,SIGNAL(tabCloseRequested(int)),this,SLOT(fermerOnglet(int)));
     connect (ui->pushButtonRecherche,SIGNAL(clicked()),this,SLOT(rechercherTexte()));
     connect (ui->pushButtonRemplaceTout,SIGNAL(clicked()),this,SLOT(remplacerTout()));
-    connect (ui->menu10_derniers_fichiers,SIGNAL(triggered(QAction*)),this,SLOT(ouvrirDernierFichier(QAction*)));
-    connect (ui->menu10_derniers_fichiers,SIGNAL(aboutToShow()),this,SLOT(afficherDerniersFichiersOuverts()));
+    connect (ui->menuFichiers_recents,SIGNAL(triggered(QAction*)),this,SLOT(ouvrirDernierFichier(QAction*)));
+    connect (ui->menuFichiers_recents,SIGNAL(aboutToShow()),this,SLOT(afficherDerniersFichiersOuverts()));
 
-    // Initialise l'objet QSettings
-    settings.beginGroup("MonEditeurDeTexte"); // Utilise un groupe pour éviter les collisions de clés
-    settings.setValue("fichiersRecents", QStringList()); // Initialise la liste des fichiers récemment ouverts
+    // Initialise QSettings
+    settings.beginGroup("EditeurDeTexte"); // Utilise un groupe pour éviter les collisions de clés
 }
 void MainWindow::ouvrirDernierFichier(QAction* action){
     ouvrir(action->text());
-    ui->menu10_derniers_fichiers->clear();
 }
 
 void MainWindow::sauvegarderUn(){
@@ -137,6 +135,7 @@ void MainWindow::ouvrir(QString file_name){
     connect(textEdit, SIGNAL(textChanged()), this, SLOT(textChange()));
     connect(textEdit, SIGNAL(cursorPositionChanged()), this, SLOT(afficherPositionCurseur()));
 
+    ui->menuFichiers_recents->clear();
     file.close();
 }
 void MainWindow::slotOuvrir(){
@@ -296,11 +295,12 @@ void MainWindow::afficherDerniersFichiersOuverts()
     // Lit la liste des fichiers récemment ouverts à partir des paramètres de l'application
     QStringList fichiersRecents = settings.value("fichiersRecents").toStringList();
     for(auto fichier:fichiersRecents){
-        ui->menu10_derniers_fichiers->addAction(fichier);
+        ui->menuFichiers_recents->addAction(fichier);
     }
 }
 MainWindow::~MainWindow()
 {
     delete ui;
+    settings.endGroup();
 }
 
