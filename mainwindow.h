@@ -2,8 +2,9 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-
+#include<QList>
 #include<QSettings>
+#include<QTextEdit>
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
@@ -29,6 +30,7 @@ private slots:
 private:
     QSettings settings;
     Ui::MainWindow *ui;
+    QMap<QTextEdit*, QString> contenuInitialMap;
     void sauvegarder(int index);
 
     void ouvrir(QString);

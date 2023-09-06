@@ -54,12 +54,32 @@ void MainWindow::sauvegarderTout(){
 }
 
 void MainWindow::textChange(){
+
     int index = ui->tabWidget->currentIndex();
     QString tabText = ui->tabWidget->tabText(index);
 
-    // Ajoute un astérisque au nom de l'onglet pour indiquer qu'il est modifié
-    if (!tabText.endsWith("*")) {
-        ui->tabWidget->setTabText(index, tabText + "*");
+    QTextEdit *textEdit = qobject_cast<QTextEdit*>(ui->tabWidget->currentWidget());
+    if (textEdit)
+    {
+        // Comparez le contenu actuel avec le contenu initial de cet onglet
+        QString contenuInitial = contenuInitialMap.value(textEdit);
+
+        if (textEdit->toPlainText() == contenuInitial)
+        {
+            // Le contenu est identique, retirez l'astérisque "*"
+            if (tabText.endsWith("*"))
+            {
+                ui->tabWidget->setTabText(index, tabText.left(tabText.length() - 1));
+            }
+        }
+        else
+        {
+            // Le contenu a été modifié, ajoutez l'astérisque "*"
+            if (!tabText.endsWith("*"))
+            {
+                ui->tabWidget->setTabText(index, tabText + "*");
+            }
+        }
     }
 }
 void MainWindow::ouvrir(QString file_name){
@@ -108,7 +128,7 @@ void MainWindow::ouvrir(QString file_name){
     QTextStream in (&file);
     QString text = in.readAll();
     textEdit->setText(text);
-
+    contenuInitialMap[textEdit] = text;
     connect(textEdit, SIGNAL(textChanged()), this, SLOT(textChange()));
     connect(textEdit, SIGNAL(cursorPositionChanged()), this, SLOT(afficherPositionCurseur()));
 
