@@ -61,12 +61,12 @@ void MainWindow::textChange(){
     QTextEdit *textEdit = qobject_cast<QTextEdit*>(ui->tabWidget->currentWidget());
     if (textEdit)
     {
-        // Comparez le contenu actuel avec le contenu initial de cet onglet
+        // Compare le contenu actuel avec le contenu initial de cet onglet
         QString contenuInitial = contenuInitialMap.value(textEdit);
 
         if (textEdit->toPlainText() == contenuInitial)
         {
-            // Le contenu est identique, retirez l'astérisque "*"
+            // Le contenu est identique, on retire l'astérisque "*"
             if (tabText.endsWith("*"))
             {
                 ui->tabWidget->setTabText(index, tabText.left(tabText.length() - 1));
@@ -74,7 +74,7 @@ void MainWindow::textChange(){
         }
         else
         {
-            // Le contenu a été modifié, ajoutez l'astérisque "*"
+            // Le contenu a été modifié, on ajoute l'astérisque "*"
             if (!tabText.endsWith("*"))
             {
                 ui->tabWidget->setTabText(index, tabText + "*");
