@@ -32,8 +32,10 @@ private:
     QSettings settings;
     Ui::MainWindow *ui;
     QMap<QTextEdit*, QString> contenuInitialMap;
+    void connectActions();
+    void initializeSettings();
+    void displayRecentFiles();
+    void ouvrir(QString file_name);
     void sauvegarder(int index);
-    void afficherDerniersFichiersOuverts();
-    void ouvrir(QString);
 };
 #endif // MAINWINDOW_H
